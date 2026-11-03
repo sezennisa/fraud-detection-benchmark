@@ -2,7 +2,7 @@
 
 🇫🇷 [Français](#-français) · 🇬🇧 [English](#-english)
 
-![Courbes précision-rappel](figures/courbes_pr.png)
+![Courbes précision-rappel](courbes_pr.png)
 
 ---
 
@@ -37,7 +37,7 @@ Comparer des modèles de Machine Learning (**Random Forest, XGBoost, réseau de 
 - **En euros, l'écart est beaucoup plus faible** et dépend du seuil et du coût d'une alerte : la régression logistique a détecté quelques fraudes de montant élevé. Un meilleur score statistique ne garantit pas un meilleur gain financier, d'où l'importance de construire les hypothèses de coût avec le métier.
 - **SHAP** montre que quelques variables (`V4`, `V14`, `V12`, `V10`) portent l'essentiel des décisions.
 
-![SHAP](figures/shap_global.png)
+![SHAP](shap_global.png)
 
 ### Limites
 Découpage aléatoire (un découpage temporel serait plus réaliste), variables anonymisées, petit nombre de fraudes en test.
