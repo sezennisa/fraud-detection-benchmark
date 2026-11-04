@@ -1,4 +1,4 @@
-# Détection de fraude à la carte bancaire – Benchmark de modèles de Machine Learning
+# Détection de fraude à la carte bancaire
 
 🇫🇷 [Français](#-français) · 🇬🇧 [English](#-english)
 
@@ -9,46 +9,51 @@
 ## 🇫🇷 Français
 
 ### Objectif
-Comparer des modèles de Machine Learning (**Random Forest, XGBoost, réseau de neurones**) à un modèle classique, la **régression logistique**, pour détecter les fraudes à la carte bancaire. Puis rendre les modèles **explicables (SHAP)** et traduire les résultats en **euros**.
+Comparer la régression logistique (le modèle classique utilisé en banque) avec trois modèles de machine learning : Random Forest, XGBoost et un réseau de neurones.
+
+Questions :
+1. Est-ce que les modèles plus complexes détectent mieux la fraude ?
+2. Est-ce qu'on peut expliquer leurs décisions ? (SHAP)
+3. Combien ça représente en euros ?
 
 ### Données
-[Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud) (ULB / Worldline) : 284 807 transactions européennes, dont **492 fraudes (0,17 %)**. Les variables `V1`–`V28` sont anonymisées (ACP), seules `Time` et `Amount` sont en clair. Le fichier CSV n'est pas inclus dans ce dépôt : il faut le télécharger sur Kaggle.
+[Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud) (Kaggle) : 284 807 transactions, dont 492 fraudes (**0,17 %**). Les variables V1 à V28 sont anonymisées. Le fichier CSV n'est pas dans ce dépôt, il faut le télécharger sur Kaggle.
 
-### Démarche
-1. **Exploration :** contrôle qualité, déséquilibre des classes, montants des fraudes.
-2. **Découpage stratifié** : entraînement 60 % / validation 20 % / test 20 %.
-3. **Quatre modèles**, avec gestion du déséquilibre (`class_weight`, `scale_pos_weight`).
-4. **Choix du seuil** de décision sur la validation (maximisation du F1).
-5. **Évaluation sur le test** : AUC-ROC, **PR-AUC**, précision, rappel, F1. L'accuracy n'est pas utilisée, car elle n'a pas de sens avec 0,17 % de fraudes.
-6. **Explicabilité** avec SHAP (importance globale et explication d'une transaction).
-7. **Impact financier** : gain net = pertes évitées − coût des alertes, avec un seuil optimisé sur le coût.
+### Étapes
+1. Exploration des données
+2. Séparation : train 60 % / validation 20 % / test 20 %
+3. Entraînement des 4 modèles (en donnant plus de poids aux fraudes)
+4. Choix du seuil de décision sur la validation
+5. Résultats sur le test : AUC-ROC, PR-AUC, précision, rappel, F1 (pas d'accuracy, car avec 0,17 % de fraudes elle n'a pas de sens)
+6. Explication des décisions avec SHAP
+7. Calcul du gain en euros
 
-### Résultats (jeu de test, 99 fraudes)
+### Résultats (test, 99 fraudes)
 
 | Modèle | AUC-ROC | PR-AUC | Précision | Rappel | F1 |
 |---|---|---|---|---|---|
 | Régression logistique | 0,966 | 0,758 | 0,886 | 0,788 | 0,834 |
-| Random Forest | 0,977 | **0,875** | 0,931 | 0,818 | **0,871** |
-| XGBoost | 0,977 | 0,872 | 0,931 | 0,818 | **0,871** |
+| Random Forest | 0,977 | 0,875 | 0,931 | 0,818 | 0,871 |
+| XGBoost | 0,977 | 0,872 | 0,931 | 0,818 | 0,871 |
 | Réseau de neurones | 0,958 | 0,854 | 0,844 | 0,818 | 0,831 |
 
-### Ce que j'en retiens
-- **XGBoost et Random Forest** classent bien mieux les transactions à risque que la régression logistique (PR-AUC 0,87–0,88 contre 0,76), avec moins de fausses alertes.
-- **En euros, l'écart est beaucoup plus faible** et dépend du seuil et du coût d'une alerte : la régression logistique a détecté quelques fraudes de montant élevé. Un meilleur score statistique ne garantit pas un meilleur gain financier, d'où l'importance de construire les hypothèses de coût avec le métier.
-- **SHAP** montre que quelques variables (`V4`, `V14`, `V12`, `V10`) portent l'essentiel des décisions.
+- XGBoost et Random Forest détectent mieux les fraudes : PR-AUC d'environ 0,87 contre 0,76 pour la régression logistique. XGBoost trouve 81 fraudes sur 99 avec 6 fausses alertes, la régression logistique 78 avec 10 fausses alertes.
+- En euros (fraudes évitées moins 5 € par alerte), la différence est très petite, et la régression logistique gagne même un peu plus (environ 6 800 € contre 6 700 €), car elle a détecté quelques fraudes avec de gros montants.
+- Conclusion : un meilleur score ne veut pas toujours dire un meilleur gain. Le coût d'une alerte doit être fixé avec les équipes métier.
+- SHAP montre que quelques variables (V14, V4, V12, V10) comptent beaucoup plus que les autres.
 
 ![SHAP](shap_global.png)
 
 ### Limites
-Découpage aléatoire (un découpage temporel serait plus réaliste), variables anonymisées, petit nombre de fraudes en test.
+Découpage aléatoire (il faudrait plutôt séparer par date), variables anonymisées, seulement 99 fraudes dans le test.
 
 ### Outils
-Python · pandas · scikit-learn · XGBoost · SHAP · Matplotlib
+Python, pandas, scikit-learn, XGBoost, SHAP, Matplotlib
 
 ### Lancer le projet
 ```bash
 pip install -r requirements.txt
-# placer creditcard.csv (Kaggle) dans le dossier
+# mettre creditcard.csv (Kaggle) dans le dossier, et créer un dossier "figures"
 jupyter notebook fraud_detection_benchmark.ipynb
 ```
 
@@ -57,17 +62,15 @@ jupyter notebook fraud_detection_benchmark.ipynb
 ## 🇬🇧 English
 
 ### Goal
-Benchmark Machine Learning models (**Random Forest, XGBoost, neural network**) against a classic **logistic regression** for credit card fraud detection, make them **explainable with SHAP**, and translate the results into **money**.
+Compare logistic regression (the classic model used in banks) with three machine learning models: Random Forest, XGBoost and a neural network, for credit card fraud detection. Then explain the decisions with SHAP and compute the result in euros.
 
 ### Data
-[Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud): 284,807 European card transactions, **492 frauds (0.17%)**. Features `V1`–`V28` are PCA-anonymised. The CSV is not included; download it from Kaggle.
+[Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud) (Kaggle): 284,807 transactions, 492 frauds (**0.17%**). The CSV is not included; download it from Kaggle.
 
-### Method
-Stratified 60/20/20 split · class imbalance handling · decision threshold tuned on validation · evaluation with ROC-AUC, **PR-AUC**, precision, recall, F1 (no accuracy) · SHAP explanations · financial impact (avoided losses minus alert handling cost), with a cost-optimised threshold.
-
-### Key findings
-- Tree-based models (**XGBoost, Random Forest**) rank risky transactions much better than logistic regression (PR-AUC 0.87–0.88 vs 0.76) with fewer false alerts.
-- **In euros the gap is much smaller** and depends on the threshold and the cost of an alert: a better statistical score does not guarantee a better financial outcome.
-- SHAP shows that a few features (`V4`, `V14`, `V12`, `V10`) drive most decisions.
+### Main results
+- XGBoost and Random Forest detect fraud better: PR-AUC about 0.87 vs 0.76 for logistic regression, with fewer false alerts.
+- In euros, the difference is very small, and logistic regression even earns slightly more, because it caught a few large frauds.
+- A better score does not always mean a better financial result.
+- SHAP shows that a few features (V14, V4, V12, V10) drive most decisions.
 
 **Author:** Sezen Nisa Dikmen
