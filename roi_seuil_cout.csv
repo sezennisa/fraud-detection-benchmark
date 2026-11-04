@@ -1,5 +1,5 @@
-Modèle,Seuil (coût),Fraudes détectées,Alertes,Gain net test (€),Écart vs régression logistique (€)
-Régression logistique,1.0,82,101,6859,0
-Random Forest,0.2312,82,92,6697,-162
-XGBoost,0.3047,84,96,6876,17
-Réseau de neurones,0.2831,81,97,6665,-194
+Modèle,Seuil,Gain net test (€)
+Régression logistique,1.0,6888
+Random Forest,0.2496,6697
+XGBoost,0.5214999914169312,6730
+Réseau de neurones,0.3098,6670

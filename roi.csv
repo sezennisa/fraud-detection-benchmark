@@ -1,5 +1,5 @@
-Modèle,Alertes,Perte évitée (€),Perte restante (€),Coût des alertes (€),Gain net (€),Écart vs régression logistique (€)
-Régression logistique,88,7239.0,2635.0,440,6799.0,0.0
-Random Forest,87,7156.0,2718.0,435,6721.0,-78.0
-XGBoost,87,7156.0,2718.0,435,6721.0,-78.0
-Réseau de neurones,96,7150.0,2724.0,480,6670.0,-129.0
+Modèle,Alertes,Fraudes évitées (€),Coût des alertes (€),Gain net (€)
+Régression logistique,88,7239,440,6799
+Random Forest,87,7156,435,6721
+XGBoost,87,7156,435,6721
+Réseau de neurones,96,7150,480,6670
